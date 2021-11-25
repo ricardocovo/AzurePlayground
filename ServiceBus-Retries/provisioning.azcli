@@ -1,0 +1,25 @@
+﻿az servicebus queue create `
+    --resource-group playground `
+    --namespace-name retry-tests `
+    --name short-lock-duration `
+    --enable-dead-lettering-on-message-expiration true `
+    --lock-duration "PT5S" `
+    --max-delivery-count 3 
+
+az servicebus queue create `
+    --resource-group playground `
+    --namespace-name retry-tests `
+    --name long-lock-duration `
+    --enable-dead-lettering-on-message-expiration true `
+    --lock-duration "PT2M" `
+    --max-delivery-count 3 
+
+az servicebus queue delete `
+    --resource-group playground `
+    --namespace-name retry-tests `
+    --name short-lock-duration `
+
+az servicebus queue delete `
+    --resource-group playground `
+    --namespace-name retry-tests `
+    --name long-lock-duration `
