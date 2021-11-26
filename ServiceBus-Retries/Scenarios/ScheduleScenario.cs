@@ -8,8 +8,7 @@ public class ScheduleScenario : BaseScenario
     public override async Task Run()
     {
         //ssend a message
-        var messageBody = new { body = "Schedule Scenario Message. {DateTime.Now.Ticks}", AttemptCount = 0 };
-        await _sender.SendMessageAsync(new ServiceBusMessage(JsonConvert.SerializeObject(messageBody)));
+        await _sender.SendMessageAsync(new ServiceBusMessage($"Schedule Scenario Message. {DateTime.Now.Ticks}"));
         Console.WriteLine("-> Message Sent");
         //receive and let expire
         var count = 0;
@@ -23,11 +22,16 @@ public class ScheduleScenario : BaseScenario
                 Console.WriteLine($"Message Enqueued Time: {message.EnqueuedTime}");
                 Console.WriteLine($"Message Id: {message.MessageId}");
                 Console.WriteLine($"Message Body: {message.Body}");
-                //sechedule
-                var newMessage = new ServiceBusMessage(message.Body);
-                await _sender.ScheduleMessageAsync(new ServiceBusMessage(message.Body), DateTimeOffset.Now.AddSeconds(3));
-                //wait 
-                Thread.Sleep(3000);
+                await _receiver.CompleteMessageAsync(message);
+                //Schedule                
+                if (count < 1)
+                {
+                    var newMessage = new ServiceBusMessage(message.Body);
+                    await _sender.ScheduleMessageAsync(new ServiceBusMessage(message.Body), DateTimeOffset.Now.AddSeconds(3));
+                    Console.WriteLine("-> Message scheduled for 3 seconds from now");
+                    //wait                 
+                    Thread.Sleep(3000);
+                }
 
             }
             else

@@ -9,6 +9,9 @@ public struct CustomMessageBody
 
 public class SlidingScheduleScenario : BaseScenario
 {
+    private int maxAttempts = 4;
+    private int baseWaitTime = 3;
+    private int[] fibonacci = new int[] { 1, 2, 3, 5, 8 };
     public SlidingScheduleScenario(Config config) : base(config.ConnectionString, config.QueueName2) { }
 
     public override async Task Run()
@@ -20,8 +23,7 @@ public class SlidingScheduleScenario : BaseScenario
         //receive and let expire
         var count = 0;
         Console.WriteLine($"\r\n-> Receiving... ");
-        var waitConstant = 3;
-        while (count < 4)
+        while (count < maxAttempts + 1)
         {
             var message = await _receiver.ReceiveMessageAsync();
             if (message != null)
@@ -30,14 +32,14 @@ public class SlidingScheduleScenario : BaseScenario
                 Console.WriteLine($"Message Enqueued Time: {message.EnqueuedTime}");
                 Console.WriteLine($"Message Id: {message.MessageId}");
                 Console.WriteLine($"Message Body: {message.Body}");
-                
+
                 //sechedule
                 var receivedMessageBody = JsonConvert.DeserializeObject<CustomMessageBody>(message.Body.ToString());
-                if (receivedMessageBody.AttemptCount < 3)
+                if (receivedMessageBody.AttemptCount < maxAttempts)
                 {
                     await _receiver.CompleteMessageAsync(message);
+                    var waitTime = CalculateDelay(receivedMessageBody.AttemptCount);
                     receivedMessageBody.AttemptCount++;
-                    var waitTime = receivedMessageBody.AttemptCount * waitConstant;
                     Console.WriteLine($"-> Re-scheduling message...");
                     var newMessage = new ServiceBusMessage(JsonConvert.SerializeObject(receivedMessageBody));
                     await _sender.ScheduleMessageAsync(
@@ -68,6 +70,11 @@ public class SlidingScheduleScenario : BaseScenario
         Console.WriteLine($"Message Body: {deadLetterMessage.Body}");
         await _deadLetterReceiver.CompleteMessageAsync(deadLetterMessage);
         Console.WriteLine($"-> Done!");
+    }
+
+    private int CalculateDelay(int attempt)
+    {
+        return fibonacci[attempt] * baseWaitTime;
     }
 }
 
