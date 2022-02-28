@@ -11,6 +11,10 @@ if (config == null)
 var scenario = args.Length == 0 ? "" : args[0];
 switch (scenario.ToLower())
 {
+    case "normal":
+        Console.WriteLine("Running the Normal scenario");
+        new NormalScenario(config).Run().GetAwaiter().GetResult();
+        break;
     case "abandon":
         Console.WriteLine("Running the Abandon scenario");
         new AbandonScenario(config).Run().GetAwaiter().GetResult();
