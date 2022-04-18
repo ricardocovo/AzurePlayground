@@ -1,0 +1,69 @@
+## Create resource group
+ az group create --name 2delete --location canadacentral
+
+## Create app service plan 
+az appservice plan create -g 2delete -n asp-win-ca-central --sku S1 --location canadacentral
+az appservice plan create -g 2delete -n asp-win-ca-east --sku S1 --location canadaeast
+
+## Create web apps
+az webapp create `
+    --name demo-ca-central `
+    --plan asp-win-ca-central `
+    --resource-group 2delete
+
+az webapp create `
+    --name demo-ca-east `
+    --plan asp-win-ca-east `
+    --resource-group 2delete
+
+## get web app ids
+az webapp show --name demo-ca-central `
+    --resource-group 2delete `
+    --query id
+
+az webapp show --name demo-ca-east `
+    --resource-group 2delete `
+    --query id
+
+#Create traffic manager profile
+az network traffic-manager profile create
+	--name demo-asp-win-ca
+	--resource-group 2delete
+	--routing-method Priority
+    --path "/"
+	--protocol HTTP
+	--unique-dns-name demo-asp-win-ca
+	--ttl 30
+	--port 80
+
+az network traffic-manager profile show `
+    --name demo-asp-win-ca `
+    --resource-group 2delete `
+    --query dnsConfig.fqdn
+
+
+az network traffic-manager endpoint create `
+    --name demo-ca-central `
+    --resource-group 2delete `
+    --profile-name demo-asp-win-ca `
+    --type azureEndpoints `
+    --target-resource-id <id> `
+    --priority 1 `
+    --endpoint-status Enabled
+
+az network traffic-manager endpoint create `
+    --name demo-ca-east `
+    --resource-group 2delete `
+    --profile-name demo-asp-win-ca `
+    --type azureEndpoints `
+    --target-resource-id <id> `
+    --priority 2 `
+    --endpoint-status Enabled
+
+# Disable one endpoint for testing purposes
+ az network traffic-manager endpoint update `
+     --name  demo-ca-central `
+     --resource-group 2delete `
+     --profile-name demo-asp-win-ca `
+     --type azureEndpoints `
+     --endpoint-status Disabled
