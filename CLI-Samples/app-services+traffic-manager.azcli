@@ -1,3 +1,5 @@
+## This sample create 2 web apps and sets up a traffic manager as an entry point for them.
+
 ## Create resource group
  az group create --name 2delete --location canadacentral
 
@@ -26,14 +28,14 @@ az webapp show --name demo-ca-east `
     --query id
 
 #Create traffic manager profile
-az network traffic-manager profile create
-	--name demo-asp-win-ca
-	--resource-group 2delete
-	--routing-method Priority
-    --path "/"
-	--protocol HTTP
-	--unique-dns-name demo-asp-win-ca
-	--ttl 30
+az network traffic-manager profile create `
+	--name demo-asp-win-ca `
+	--resource-group 2delete `
+	--routing-method Priority `
+    --path "/" `
+	--protocol HTTPS `
+	--unique-dns-name demo-asp-win-ca `
+	--ttl 30 `
 	--port 80
 
 az network traffic-manager profile show `
@@ -67,3 +69,6 @@ az network traffic-manager endpoint create `
      --profile-name demo-asp-win-ca `
      --type azureEndpoints `
      --endpoint-status Disabled
+
+## delete resource group
+ az group delete --name 2delete --no-wait --yes
