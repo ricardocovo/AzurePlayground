@@ -1,0 +1,35 @@
+﻿@hostname=localhost
+@port=7177
+@url=http://{{hostname}}:{{port}}/api
+
+### Create Listing
+POST {{url}}/listing
+Content-Type: application/json
+
+{
+    "name": "Casa Amore - Merida",
+    "shortDescription": "More than a stay..."
+}
+
+### Update Listing
+PUT {{url}}/listing/7e4e7b10-6d5d-4b02-903d-1ffc93333f55
+Content-Type: application/json
+
+{
+    "Id": "7e4e7b10-6d5d-4b02-903d-1ffc93333f55",
+    "Name": "Casa Amore - Merida",
+    "ShortDescription": "More than a stay, close to everything",
+    "IsActive": true,
+    "CreatedDate": "2023-06-22T13:55:54.85Z",
+    "UpdatedDate": "2023-06-22T13:55:54.85Z"
+  }
+
+### Get All Listings
+GET {{url}}/listing
+
+
+### Get Single Listing
+GET {{url}}/listing/53945dd2-aaa9-45d8-95f6-e0e0c30e368c
+
+### Delete Lsiting
+DELETE {{url}}/listing/53945dd2-aaa9-45d8-95f6-e0e0c30e368c
