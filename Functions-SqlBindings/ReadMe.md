@@ -34,3 +34,7 @@ SET CHANGE_TRACKING = ON
 ALTER TABLE [dbo].[Table]
 ENABLE CHANGE_TRACKING;
 ```
+
+### Tests
+
+Look into the ApiTest.http for some pre-made requests to the service. You will need to change some values as appropriate.

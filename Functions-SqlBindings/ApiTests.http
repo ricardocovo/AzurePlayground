@@ -1,4 +1,6 @@
-﻿@hostname=localhost
+﻿# Note: This file is for ease of testing. 
+# Changes will be required.
+@hostname=localhost
 @port=7177
 @url=http://{{hostname}}:{{port}}/api
 
@@ -31,5 +33,5 @@ GET {{url}}/listing
 ### Get Single Listing
 GET {{url}}/listing/53945dd2-aaa9-45d8-95f6-e0e0c30e368c
 
-### Delete Lsiting
+### Delete Listing
 DELETE {{url}}/listing/53945dd2-aaa9-45d8-95f6-e0e0c30e368c
