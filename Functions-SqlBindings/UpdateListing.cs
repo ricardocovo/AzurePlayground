@@ -20,22 +20,20 @@ namespace Company.Function
             ILogger log,
             [Sql("[dbo].[Listings]", "SqlConnectionString")] IAsyncCollector<Listing> listings)
         {
-
-            log.LogInformation("C# HTTP trigger with SQL Output Binding function processed a request.");
-
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var listing = JsonConvert.DeserializeObject<Listing>(requestBody);
-            if (id != listing.Id) {
+            if (id != listing.Id)
+            {
                 return new BadRequestResult();
-            
+
             }
             //prepare
             listing.UpdatedDate = DateTime.Now;
 
-			await listings.AddAsync(listing);
-			await listings.FlushAsync();
+            await listings.AddAsync(listing);
+            await listings.FlushAsync();
 
-			return new OkObjectResult(listing);
+            return new OkObjectResult(listing);
         }
     }
 

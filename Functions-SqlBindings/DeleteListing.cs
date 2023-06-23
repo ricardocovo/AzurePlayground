@@ -11,15 +11,11 @@ namespace Company.Function
     public static class DeleteListing
     {
         [FunctionName("DeleteListing")]
-         public static IActionResult Run(
+        public static IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "listing/{id}")] HttpRequest req,
             [Sql("DELETE FROM [dbo].[Listings] WHERE Id = @Id", "SqlConnectionString", "@Id={id}")] IEnumerable<Object> result,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger with SQL Input Binding function processed a request.");
-
-
-
             return new OkResult();
         }
     }
